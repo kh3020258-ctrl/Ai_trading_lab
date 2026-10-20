@@ -1,126 +1,582 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Trading Lab</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#08090c;color:#f5f5f5;font-family:Arial,sans-serif;padding:18px}
-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929;padding-bottom:18px}
-.logo{font-size:21px;font-weight:bold;color:#e7bd62}
-.logo span{color:white}
-.badge{color:#e7bd62;border:1px solid #8d7037;padding:7px 10px;border-radius:20px;font-size:11px}
-h1{font-size:26px;margin-top:28px}
-.gold{color:#e7bd62}
-.subtitle{color:#92949d;font-size:13px;line-height:1.6}
-.card{background:#111319;border:1px solid #292b31;border-radius:14px;padding:17px;margin-top:17px}
-.label{color:#999da8;font-size:12px}
-.balance{font-size:30px;font-weight:bold;margin-top:9px}
-.positive{color:#40d6a0;font-size:13px;margin-top:8px}
-.section-title{font-size:17px;font-weight:bold;margin:27px 0 12px}
-.markets{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.market{background:#111319;border:1px solid #303139;border-radius:12px;padding:14px;cursor:pointer;color:white;text-align:left}
-.market.active{border-color:#e7bd62;background:#211d13}
-.market strong{display:block;margin-bottom:8px;font-size:14px}
-.market small{color:#aaa}
-.price{font-size:18px;font-weight:bold;margin-top:7px}
-select,button{width:100%;padding:13px;background:#17191f;border:1px solid #383a42;border-radius:9px;color:white;font-size:14px;margin-top:10px}
-button.primary{background:#e7bd62;color:#111;font-weight:bold;border:0}
-button:active{opacity:.8}
-.status{display:inline-block;color:#40d6a0;font-size:12px}
-footer{text-align:center;color:#777;font-size:11px;padding:25px 0}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <title>AI Trading Lab</title>
+  <style>
+    :root {
+      --bg: #080808;
+      --panel: #121212;
+      --gold: #d4af37;
+      --text: #f5f5f5;
+      --muted: #999999;
+      --green: #25c685;
+      --red: #ff5c68;
+      --border: #292929;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+    }
+    button, select {
+      font: inherit;
+    }
+    header {
+      padding: 22px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      color: var(--gold);
+      font-size: 19px;
+      font-weight: bold;
+    }
+    .status {
+      font-size: 11px;
+      color: var(--green);
+      border: 1px solid #205d46;
+      padding: 7px 9px;
+      border-radius: 20px;
+    }
+    main {
+      max-width: 1000px;
+      margin: auto;
+      padding: 22px 15px 40px;
+    }
+    .welcome {
+      margin-bottom: 24px;
+    }
+    .welcome h1 {
+      font-size: 27px;
+      margin-bottom: 10px;
+    }
+    .welcome p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .section-title {
+      font-size: 17px;
+      margin: 25px 0 13px;
+    }
+    .balance-card {
+      background: linear-gradient(135deg, #211b0b, #111111 70%);
+      border: 1px solid #6b5720;
+      border-radius: 16px;
+      padding: 22px;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    .balance {
+      font-size: 35px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    .gold {
+      color: var(--gold);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .stat-card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 16px;
+      min-width: 0;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 9px;
+      overflow-wrap: anywhere;
+    }
+    .market-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    select, button {
+      border-radius: 9px;
+      padding: 12px;
+    }
+    select {
+      flex: 1;
+      min-width: 140px;
+      background: #1a1a1a;
+      color: white;
+      border: 1px solid #444;
+    }
+    button {
+      background: var(--gold);
+      color: #111;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    .price {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 16px 0 8px;
+    }
+    .chart {
+      height: 145px;
+      display: flex;
+      align-items: end;
+      justify-content: space-around;
+      gap: 5px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .bar {
+      flex: 1;
+      max-width: 24px;
+      min-width: 5px;
+      border-radius: 3px 3px 0 0;
+      background: var(--green);
+      opacity: 0.85;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .notice {
+      background: #201b0d;
+      color: #e5cf81;
+      border: 1px solid #5c4b1b;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 12px;
+      line-height: 1.7;
+      margin-top: 15px;
+    }
+    .analysis-result {
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #191919;
+      line-height: 1.8;
+      font-size: 13px;
+    }
+    .trade-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .buy {
+      background: #167b56;
+      color: white;
+    }
+    .sell {
+      background: #a9323d;
+      color: white;
+    }
+    .history {
+      margin-top: 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+    }
+    @media (min-width: 700px) {
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      .dashboard-grid .section-title {
+        margin-top: 25px;
+      }
+      .welcome h1 {
+        font-size: 34px;
+      }
+    }
+  </style>
 </head>
 <body>
-<header>
-<div class="logo">AI <span>TRADING LAB</span></div>
-<div class="badge">PAPER MODE</div>
-</header>
-
-<h1>Your Personal<br><span class="gold">Trading Terminal</span></h1>
-<p class="subtitle">AI-assisted market analysis & strategy testing.<br>Simulation only — no real trades.</p>
-
-<div class="card">
-<div class="label">VIRTUAL ACCOUNT BALANCE</div>
-<div class="balance" id="balance">$10.00</div>
-<div class="positive">● Demo account active</div>
-</div>
-
-<div class="section-title">Market Watch <span class="gold">/ Assets</span></div>
-<div class="markets">
-<button class="market active" onclick="choose(this,'Gold','XAU/USD')">
-<strong>🥇 GOLD</strong><small>XAU/USD</small><div class="price">Selected</div>
-</button>
-<button class="market" onclick="choose(this,'EUR/USD','EUR/USD')">
-<strong>💱 EUR/USD</strong><small>Forex</small><div class="price">Selected</div>
-</button>
-<button class="market" onclick="choose(this,'Oil','WTI')">
-<strong>🛢️ CRUDE OIL</strong><small>WTI</small><div class="price">Selected</div>
-</button>
-<button class="market" onclick="choose(this,'GBP/USD','GBP/USD')">
-<strong>💱 GBP/USD</strong><small>Forex</small><div class="price">Selected</div>
-</button>
-</div>
-
-<div class="section-title">AI Analysis <span class="gold">/ Lab</span></div>
-<div class="card">
-<div class="label">SELECTED ASSET</div>
-<div class="price" id="asset">Gold — XAU/USD</div>
-<label class="label" for="duration">Analysis duration</label>
-<select id="duration">
-<option>1 minute</option><option>5 minutes</option>
-<option>15 minutes</option><option>1 hour</option>
-<option>4 hours</option><option>12 hours</option>
-<option>24 hours</option>
-</select>
-<button class="primary" onclick="analyze()">Run Demo Analysis</button>
-<p id="analysis" class="subtitle">Ready to test a strategy using demo data.</p>
-</div>
-
-<div class="section-title">Paper Trading <span class="gold">/ Simulation</span></div>
-<div class="card">
-<div class="label">SIMULATION DURATION</div>
-<select id="tradeDuration">
-<option>1 hour</option><option>2 hours</option>
-<option>3 hours</option><option>6 hours</option>
-<option>12 hours</option><option>24 hours</option>
-</select>
-<div class="label" style="margin-top:18px">SIMULATED DIRECTION</div>
-<select id="direction">
-<option>Buy</option><option>Sell</option>
-</select>
-<button class="primary" onclick="trade()">Record Demo Trade</button>
-<p id="tradeMessage" class="subtitle">No simulated trades recorded yet.</p>
-</div>
-
-<div class="section-title">System Status</div>
-<div class="card">
-<p><span class="status">●</span> Interface ready</p>
-<p class="subtitle">Market prices are not connected yet. Analysis is a demo placeholder, not a live AI signal.</p>
-</div>
-
-<footer>AI TRADING LAB · PRIVATE WORKSPACE · SIMULATION ONLY</footer>
-
-<script>
-let selectedAsset="Gold — XAU/USD";
-function choose(button,name,symbol){
-document.querySelectorAll('.market').forEach(b=>b.classList.remove('active'));
-button.classList.add('active');
-selectedAsset=name+" — "+symbol;
-document.getElementById('asset').textContent=selectedAsset;
-}
-function analyze(){
-let duration=document.getElementById('duration').value;
-document.getElementById('analysis').textContent=
-"Demo analysis requested for "+selectedAsset+" over "+duration+". Connect a market data source and real analysis engine before using actual signals.";
-}
-function trade(){
-let direction=document.getElementById('direction').value;
-let duration=document.getElementById('tradeDuration').value;
-document.getElementById('tradeMessage').textContent=
-"Demo trade recorded: "+direction+" "+selectedAsset+" · Duration: "+duration+". No real order was placed.";
-}
-</script>
+  <header>
+    <div class="logo">AI TRADING LAB</div>
+    <div class="status">● DEMO MODE</div>
+  </header>
+  <main>
+    <section class="welcome">
+      <h1>Trading Intelligence</h1>
+      <p>
+        Your personal workspace for market analysis,
+        strategy testing and simulated trading.
+      </p>
+    </section>
+    <h2 class="section-title">Virtual Account</h2>
+    <section class="balance-card">
+      <div class="label">SIMULATED ACCOUNT BALANCE</div>
+      <div class="balance">
+        $<span id="balance">10.00</span>
+      </div>
+      <div class="muted">
+        Virtual funds only. No real money is connected.
+      </div>
+    </section>
+    <section class="stats">
+      <div class="stat-card">
+        <div class="label">Total Trades</div>
+        <div class="stat-value" id="totalTrades">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Winning Trades</div>
+        <div class="stat-value" id="winningTrades">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Win Rate</div>
+        <div class="stat-value" id="winRate">0%</div>
+      </div>
+    </section>
+    <div class="dashboard-grid">
+      <section>
+        <h2 class="section-title">Market Watch</h2>
+        <div class="panel">
+          <div class="market-controls">
+            <select id="market">
+              <option value="XAUUSD">Gold (XAU/USD)</option>
+              <option value="EURUSD">EUR/USD</option>
+              <option value="GBPUSD">GBP/USD</option>
+              <option value="USDJPY">USD/JPY</option>
+              <option value="OIL">Crude Oil</option>
+            </select>
+            <button id="refreshButton">Refresh</button>
+          </div>
+          <div class="label">DEMO PRICE — NOT LIVE MARKET DATA</div>
+          <div class="price gold" id="price">2650.00</div>
+          <div class="muted" id="priceChange">
+            Simulated price
+          </div>
+          <div class="chart" id="chart"></div>
+          <p class="muted" style="margin-top:12px">
+            The chart displays randomly generated demo values.
+          </p>
+        </div>
+      </section>
+      <section>
+        <h2 class="section-title">AI Analysis</h2>
+        <div class="panel">
+          <div class="label">SELECTED MARKET</div>
+          <div class="stat-value gold" id="analysisMarket">
+            Gold (XAU/USD)
+          </div>
+          <div class="analysis-result" id="analysisResult">
+            Select a market and press Analyze to run a demo
+            technical indicator calculation.
+          </div>
+          <div style="margin-top:15px">
+            <div class="label">ANALYSIS DURATION</div>
+            <select id="duration" style="width:100%">
+              <option value="1">1 minute</option>
+              <option value="5">5 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="60">1 hour</option>
+              <option value="240">4 hours</option>
+              <option value="1440">24 hours</option>
+            </select>
+          </div>
+          <button id="analyzeButton" style="width:100%;margin-top:12px">
+            Analyze Market
+          </button>
+          <div class="notice">
+            This is a basic demo calculation, not a real AI model
+            or a reliable prediction of future prices.
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2 class="section-title">Paper Trading</h2>
+        <div class="panel">
+          <div class="label">TRADE SIZE (VIRTUAL USD)</div>
+          <select id="tradeSize" style="width:100%">
+            <option value="1">$1</option>
+            <option value="2">$2</option>
+            <option value="5">$5</option>
+          </select>
+          <div class="trade-buttons">
+            <button class="buy" id="buyButton">Demo Buy</button>
+            <button class="sell" id="sellButton">Demo Sell</button>
+          </div>
+          <div class="notice">
+            Trades are simulated only. This prototype does not
+            connect to a broker or execute real orders.
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2 class="section-title">Trade History</h2>
+        <div class="panel">
+          <div id="history" class="history">
+            <p class="muted">No demo trades yet.</p>
+          </div>
+          <button id="resetButton"
+            style="width:100%;margin-top:15px;background:#333;color:white">
+            Reset Demo Account
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer>
+    AI TRADING LAB · PERSONAL DEMO PROJECT · NOT FINANCIAL ADVICE
+  </footer>
+  <script>
+    // 1. Initial demo account data
+    const initialBalance = 10;
+    let balance = initialBalance;
+    let totalTrades = 0;
+    let winningTrades = 0;
+    let history = [];
+    // 2. Demo prices only, not live market data
+    const markets = {
+      XAUUSD: {
+        name: "Gold (XAU/USD)",
+        price: 2650.00
+      },
+      EURUSD: {
+        name: "EUR/USD",
+        price: 1.0800
+      },
+      GBPUSD: {
+        name: "GBP/USD",
+        price: 1.2700
+      },
+      USDJPY: {
+        name: "USD/JPY",
+        price: 150.00
+      },
+      OIL: {
+        name: "Crude Oil",
+        price: 75.00
+      }
+    };
+    let currentMarket = "XAUUSD";
+    let currentPrice = markets[currentMarket].price;
+    let previousPrice = currentPrice;
+    // 3. Find page elements
+    const balanceElement = document.getElementById("balance");
+    const totalTradesElement = document.getElementById("totalTrades");
+    const winningTradesElement = document.getElementById("winningTrades");
+    const winRateElement = document.getElementById("winRate");
+    const priceElement = document.getElementById("price");
+    const historyElement = document.getElementById("history");
+    const analysisResult = document.getElementById("analysisResult");
+    // 4. Update account statistics
+    function updateDashboard() {
+      balanceElement.textContent = balance.toFixed(2);
+      totalTradesElement.textContent = totalTrades;
+      winningTradesElement.textContent = winningTrades;
+      const rate = totalTrades === 0
+        ? 0
+        : (winningTrades / totalTrades) * 100;
+      winRateElement.textContent = rate.toFixed(1) + "%";
+    }
+    // 5. Create a simulated price chart
+    function drawChart() {
+      const chart = document.getElementById("chart");
+      chart.replaceChildren();
+      for (let i = 0; i < 20; i++) {
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = (20 + Math.random() * 100) + "px";
+        chart.appendChild(bar);
+      }
+    }
+    // 6. Change the selected market
+    function selectMarket() {
+      currentMarket = document.getElementById("market").value;
+      currentPrice = markets[currentMarket].price;
+      previousPrice = currentPrice;
+      document.getElementById("analysisMarket").textContent =
+        markets[currentMarket].name;
+      priceElement.textContent = currentPrice.toFixed(
+        currentMarket === "EURUSD" || currentMarket === "GBPUSD"
+          ? 4 : 2
+      );
+      document.getElementById("priceChange").textContent =
+        "Simulated price — not live data";
+      analysisResult.textContent =
+        "Press Analyze Market to calculate demo indicators.";
+      drawChart();
+    }
+    document.getElementById("market").addEventListener(
+      "change", selectMarket
+    );
+    // 7. Generate a random demo price
+    function refreshPrice() {
+      previousPrice = currentPrice;
+      const movement = (Math.random() - 0.5) * 0.004;
+      currentPrice = currentPrice * (1 + movement);
+      priceElement.textContent = currentPrice.toFixed(
+        currentMarket === "EURUSD" || currentMarket === "GBPUSD"
+          ? 4 : 2
+      );
+      const difference = currentPrice - previousPrice;
+      const percent = (difference / previousPrice) * 100;
+      document.getElementById("priceChange").textContent =
+        (difference >= 0 ? "+" : "") +
+        percent.toFixed(3) +
+        "% simulated movement";
+      drawChart();
+    }
+    document.getElementById("refreshButton").addEventListener(
+      "click", refreshPrice
+    );
+    // 8. Basic technical analysis using simulated history
+    function analyzeMarket() {
+      const prices = [];
+      for (let i = 0; i < 20; i++) {
+        prices.push(currentPrice * (
+          1 + (Math.random() - 0.5) * 0.01
+        ));
+      }
+      const average =
+        prices.reduce((sum, value) => sum + value, 0) /
+        prices.length;
+      const firstHalf =
+        prices.slice(0, 10).reduce((sum, value) => sum + value, 0) / 10;
+      const secondHalf =
+        prices.slice(10).reduce((sum, value) => sum + value, 0) / 10;
+      let signal = "NEUTRAL";
+      let explanation = "No clear demo signal.";
+      if (secondHalf > firstHalf && currentPrice > average) {
+        signal = "BULLISH";
+        explanation = "The generated demo values show upward momentum.";
+      } else if (secondHalf < firstHalf && currentPrice < average) {
+        signal = "BEARISH";
+        explanation = "The generated demo values show downward momentum.";
+      }
+      const duration = document.getElementById("duration").selectedOptions[0].text;
+      analysisResult.textContent =
+        "Demo signal: " + signal +
+        " | Average: " + average.toFixed(4) +
+        " | Duration: " + duration +
+        " | " + explanation +
+        " This is random demo data, not a trading recommendation.";
+    }
+    document.getElementById("analyzeButton").addEventListener(
+      "click", analyzeMarket
+    );
+    // 9. Simulate a paper trade
+    function makeTrade(direction) {
+      const size = Number(document.getElementById("tradeSize").value);
+      if (balance < size) {
+        alert("Insufficient virtual balance. Reset your demo account.");
+        return;
+      }
+      const entryPrice = currentPrice;
+      // Illustrative random result, not a real market outcome.
+      const won = Math.random() >= 0.5;
+      const change = won ? size * 0.10 : -size * 0.10;
+      balance += change;
+      totalTrades++;
+      if (won) {
+        winningTrades++;
+      }
+      history.unshift({
+        direction: direction,
+        market: currentMarket,
+        entry: entryPrice,
+        change: change
+      });
+      updateDashboard();
+      renderHistory();
+    }
+    document.getElementById("buyButton").addEventListener(
+      "click", () => makeTrade("BUY")
+    );
+    document.getElementById("sellButton").addEventListener(
+      "click", () => makeTrade("SELL")
+    );
+    // 10. Display simulated trade history
+    function renderHistory() {
+      historyElement.replaceChildren();
+      if (history.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "muted";
+        empty.textContent = "No demo trades yet.";
+        historyElement.appendChild(empty);
+        return;
+      }
+      history.slice(0, 20).forEach(trade => {
+        const row = document.createElement("div");
+        row.className = "history-item";
+        const description = document.createElement("span");
+        description.textContent =
+          trade.direction + " · " + trade.market;
+        const result = document.createElement("span");
+        result.textContent =
+          (trade.change >= 0 ? "+$" : "-$") +
+          Math.abs(trade.change).toFixed(2);
+        result.style.color =
+          trade.change >= 0 ? "#25c685" : "#ff5c68";
+        row.append(description, result);
+        historyElement.appendChild(row);
+      });
+    }
+    // 11. Reset the virtual account
+    document.getElementById("resetButton").addEventListener(
+      "click", () => {
+        const confirmed = confirm(
+          "Reset the demo balance and erase trade history?"
+        );
+        if (!confirmed) return;
+        balance = initialBalance;
+        totalTrades = 0;
+        winningTrades = 0;
+        history = [];
+        updateDashboard();
+        renderHistory();
+      }
+    );
+    // 12. Start the interface
+    updateDashboard();
+    drawChart();
+  </script>
 </body>
 </html>
