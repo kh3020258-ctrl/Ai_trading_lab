@@ -1,126 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Trading Lab</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#08090c;color:#f5f5f5;font-family:Arial,sans-serif;padding:18px}
-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929;padding-bottom:18px}
-.logo{font-size:21px;font-weight:bold;color:#e7bd62}
-.logo span{color:white}
-.badge{color:#e7bd62;border:1px solid #8d7037;padding:7px 10px;border-radius:20px;font-size:11px}
-h1{font-size:26px;margin-top:28px}
-.gold{color:#e7bd62}
-.subtitle{color:#92949d;font-size:13px;line-height:1.6}
-.card{background:#111319;border:1px solid #292b31;border-radius:14px;padding:17px;margin-top:17px}
-.label{color:#999da8;font-size:12px}
-.balance{font-size:30px;font-weight:bold;margin-top:9px}
-.positive{color:#40d6a0;font-size:13px;margin-top:8px}
-.section-title{font-size:17px;font-weight:bold;margin:27px 0 12px}
-.markets{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.market{background:#111319;border:1px solid #303139;border-radius:12px;padding:14px;cursor:pointer;color:white;text-align:left}
-.market.active{border-color:#e7bd62;background:#211d13}
-.market strong{display:block;margin-bottom:8px;font-size:14px}
-.market small{color:#aaa}
-.price{font-size:18px;font-weight:bold;margin-top:7px}
-select,button{width:100%;padding:13px;background:#17191f;border:1px solid #383a42;border-radius:9px;color:white;font-size:14px;margin-top:10px}
-button.primary{background:#e7bd62;color:#111;font-weight:bold;border:0}
-button:active{opacity:.8}
-.status{display:inline-block;color:#40d6a0;font-size:12px}
-footer{text-align:center;color:#777;font-size:11px;padding:25px 0}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Trading Lab</title>
+  <style>
+    :root {
+      --bg: #080808;
+      --panel: #121212;
+      --gold: #d4af37;
+      --text: #f5f5f5;
+      --muted: #929292;
+      --green: #35d07f;
+      --red: #ff6262;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      padding: 18px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .logo {
+      color: var(--gold);
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .badge {
+      color: var(--green);
+      font-size: 12px;
+      border: 1px solid #245a3e;
+      padding: 7px 10px;
+      border-radius: 20px;
+    }
+    h1 {
+      font-size: 25px;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid #282828;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    .value {
+      font-size: 23px;
+      font-weight: bold;
+    }
+    .gold {
+      color: var(--gold);
+    }
+    .section {
+      background: var(--panel);
+      border: 1px solid #282828;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    h2 {
+      font-size: 17px;
+      margin-bottom: 16px;
+    }
+    select, button {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+    select {
+      background: #1d1d1d;
+      color: white;
+      border: 1px solid #393939;
+    }
+    button {
+      background: var(--gold);
+      color: #080808;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:active {
+      opacity: 0.8;
+    }
+    .secondary {
+      background: #242424;
+      color: var(--gold);
+      border: 1px solid #454545;
+    }
+    .status {
+      background: #1c1c1c;
+      padding: 14px;
+      border-radius: 9px;
+      line-height: 1.8;
+      font-size: 13px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+    .status strong {
+      color: var(--gold);
+    }
+    .market-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 0;
+      border-bottom: 1px solid #292929;
+      font-size: 14px;
+    }
+    .market-row:last-child {
+      border-bottom: none;
+    }
+    .up {
+      color: var(--green);
+    }
+    .down {
+      color: var(--red);
+    }
+    .notice {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 12px;
+    }
+    footer {
+      color: #777;
+      text-align: center;
+      font-size: 12px;
+      padding: 15px 0;
+    }
+    @media (max-width: 360px) {
+      body {
+        padding: 12px;
+      }
+      .value {
+        font-size: 19px;
+      }
+      .logo {
+        font-size: 17px;
+      }
+    }
+  </style>
 </head>
 <body>
-<header>
-<div class="logo">AI <span>TRADING LAB</span></div>
-<div class="badge">PAPER MODE</div>
-</header>
-
-<h1>Your Personal<br><span class="gold">Trading Terminal</span></h1>
-<p class="subtitle">AI-assisted market analysis & strategy testing.<br>Simulation only — no real trades.</p>
-
-<div class="card">
-<div class="label">VIRTUAL ACCOUNT BALANCE</div>
-<div class="balance" id="balance">$10.00</div>
-<div class="positive">● Demo account active</div>
-</div>
-
-<div class="section-title">Market Watch <span class="gold">/ Assets</span></div>
-<div class="markets">
-<button class="market active" onclick="choose(this,'Gold','XAU/USD')">
-<strong>🥇 GOLD</strong><small>XAU/USD</small><div class="price">Selected</div>
-</button>
-<button class="market" onclick="choose(this,'EUR/USD','EUR/USD')">
-<strong>💱 EUR/USD</strong><small>Forex</small><div class="price">Selected</div>
-</button>
-<button class="market" onclick="choose(this,'Oil','WTI')">
-<strong>🛢️ CRUDE OIL</strong><small>WTI</small><div class="price">Selected</div>
-</button>
-<button class="market" onclick="choose(this,'GBP/USD','GBP/USD')">
-<strong>💱 GBP/USD</strong><small>Forex</small><div class="price">Selected</div>
-</button>
-</div>
-
-<div class="section-title">AI Analysis <span class="gold">/ Lab</span></div>
-<div class="card">
-<div class="label">SELECTED ASSET</div>
-<div class="price" id="asset">Gold — XAU/USD</div>
-<label class="label" for="duration">Analysis duration</label>
-<select id="duration">
-<option>1 minute</option><option>5 minutes</option>
-<option>15 minutes</option><option>1 hour</option>
-<option>4 hours</option><option>12 hours</option>
-<option>24 hours</option>
-</select>
-<button class="primary" onclick="analyze()">Run Demo Analysis</button>
-<p id="analysis" class="subtitle">Ready to test a strategy using demo data.</p>
-</div>
-
-<div class="section-title">Paper Trading <span class="gold">/ Simulation</span></div>
-<div class="card">
-<div class="label">SIMULATION DURATION</div>
-<select id="tradeDuration">
-<option>1 hour</option><option>2 hours</option>
-<option>3 hours</option><option>6 hours</option>
-<option>12 hours</option><option>24 hours</option>
-</select>
-<div class="label" style="margin-top:18px">SIMULATED DIRECTION</div>
-<select id="direction">
-<option>Buy</option><option>Sell</option>
-</select>
-<button class="primary" onclick="trade()">Record Demo Trade</button>
-<p id="tradeMessage" class="subtitle">No simulated trades recorded yet.</p>
-</div>
-
-<div class="section-title">System Status</div>
-<div class="card">
-<p><span class="status">●</span> Interface ready</p>
-<p class="subtitle">Market prices are not connected yet. Analysis is a demo placeholder, not a live AI signal.</p>
-</div>
-
-<footer>AI TRADING LAB · PRIVATE WORKSPACE · SIMULATION ONLY</footer>
-
-<script>
-let selectedAsset="Gold — XAU/USD";
-function choose(button,name,symbol){
-document.querySelectorAll('.market').forEach(b=>b.classList.remove('active'));
-button.classList.add('active');
-selectedAsset=name+" — "+symbol;
-document.getElementById('asset').textContent=selectedAsset;
-}
-function analyze(){
-let duration=document.getElementById('duration').value;
-document.getElementById('analysis').textContent=
-"Demo analysis requested for "+selectedAsset+" over "+duration+". Connect a market data source and real analysis engine before using actual signals.";
-}
-function trade(){
-let direction=document.getElementById('direction').value;
-let duration=document.getElementById('tradeDuration').value;
-document.getElementById('tradeMessage').textContent=
-"Demo trade recorded: "+direction+" "+selectedAsset+" · Duration: "+duration+". No real order was placed.";
-}
-</script>
+  <header>
+    <div class="logo">◆ AI TRADING LAB</div>
+    <div class="badge">● DEMO MODE</div>
+  </header>
+  <main>
+    <h1>مختبر التداول الذكي</h1>
+    <p class="subtitle">
+      مساحة شخصية لتحليل الأسواق وتجربة الاستراتيجيات
+      ومتابعة نتائج التداول الافتراضي.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <div class="label">الرصيد الافتراضي</div>
+        <div class="value gold" id="balance">$10.00</div>
+      </div>
+      <div class="card">
+        <div class="label">صافي الربح التجريبي</div>
+        <div class="value" id="profit">$0.00</div>
+      </div>
+      <div class="card">
+        <div class="label">الصفقات التجريبية</div>
+        <div class="value" id="tradeCount">0</div>
+      </div>
+      <div class="card">
+        <div class="label">حالة المختبر</div>
+        <div class="value gold" style="font-size:17px" id="labStatus">
+          جاهز
+        </div>
+      </div>
+    </div>
+    <section class="section">
+      <h2>اختيار السوق</h2>
+      <select id="market">
+        <option value="XAUUSD">الذهب — XAU/USD</option>
+        <option value="EURUSD">اليورو / الدولار — EUR/USD</option>
+        <option value="GBPUSD">الجنيه الإسترليني / الدولار — GBP/USD</option>
+        <option value="USDJPY">الدولار / الين — USD/JPY</option>
+        <option value="OIL">النفط — OIL</option>
+      </select>
+      <select id="duration">
+        <option value="1">مدة التجربة: دقيقة واحدة</option>
+        <option value="5">مدة التجربة: 5 دقائق</option>
+        <option value="15">مدة التجربة: 15 دقيقة</option>
+        <option value="60">مدة التجربة: ساعة</option>
+        <option value="180">مدة التجربة: 3 ساعات</option>
+        <option value="1440">مدة التجربة: 24 ساعة</option>
+      </select>
+      <button onclick="analyzeMarket()">تحليل تجريبي للسوق</button>
+      <div class="status" id="analysis">
+        <strong>نتيجة التحليل:</strong><br>
+        اختر السوق واضغط على زر التحليل لعرض النتيجة.
+      </div>
+      <p class="notice">
+        ملاحظة: التحليل الحالي تجريبي وتوضيحي، ولا يستخدم بيانات
+        سوق مباشرة أو ذكاءً اصطناعيًا متصلًا بمصدر خارجي.
+      </p>
+    </section>
+    <section class="section">
+      <h2>لوحة محاكاة الصفقات</h2>
+      <select id="direction">
+        <option value="buy">شراء — BUY</option>
+        <option value="sell">بيع — SELL</option>
+      </select>
+      <button onclick="openTrade()">تنفيذ صفقة افتراضية</button>
+      <button class="secondary" onclick="resetLab()">إعادة ضبط المختبر</button>
+      <div class="status" id="tradeResult">
+        لا توجد صفقات حتى الآن.
+      </div>
+      <p class="notice">
+        المحاكاة تستخدم تغيرات سعرية عشوائية للتجربة فقط.
+        النتائج ليست توقعات حقيقية لحركة السوق.
+      </p>
+    </section>
+    <section class="section">
+      <h2>الأسواق المتاحة</h2>
+      <div class="market-row">
+        <span>الذهب</span>
+        <span class="gold">XAU/USD</span>
+      </div>
+      <div class="market-row">
+        <span>اليورو / الدولار</span>
+        <span>EUR/USD</span>
+      </div>
+      <div class="market-row">
+        <span>الإسترليني / الدولار</span>
+        <span>GBP/USD</span>
+      </div>
+      <div class="market-row">
+        <span>الدولار / الين</span>
+        <span>USD/JPY</span>
+      </div>
+      <div class="market-row">
+        <span>النفط</span>
+        <span>OIL</span>
+      </div>
+    </section>
+  </main>
+  <footer>
+    AI Trading Lab © 2026 — Personal Demo Project
+  </footer>
+  <script>
+    let balance = 10;
+    let profit = 0;
+    let tradeCount = 0;
+    function analyzeMarket() {
+      const market = document.getElementById("market");
+      const duration = document.getElementById("duration").value;
+      const name = market.options[market.selectedIndex].text;
+      document.getElementById("labStatus").textContent = "تم التحليل";
+      document.getElementById("analysis").innerHTML =
+        "<strong>السوق:</strong> " + name + "<br>" +
+        "<strong>مدة التجربة:</strong> " + duration + " دقيقة<br>" +
+        "<strong>حالة النظام:</strong> يعمل بنجاح<br>" +
+        "<strong>النتيجة:</strong> واجهة التحليل جاهزة للاختبار.<br>" +
+        "لا توجد بيانات حقيقية كافية لإصدار إشارة تداول موثوقة.";
+    }
+    function openTrade() {
+      const direction = document.getElementById("direction").value;
+      const market = document.getElementById("market");
+      const name = market.options[market.selectedIndex].text;
+      if (balance <= 0) {
+        document.getElementById("tradeResult").textContent =
+          "الرصيد الافتراضي انتهى. أعد ضبط المختبر لبدء تجربة جديدة.";
+        return;
+      }
+      const stake = Math.min(1, balance);
+      const change = (Math.random() * 2 - 1) * stake;
+      balance += change;
+      profit += change;
+      tradeCount++;
+      document.getElementById("balance").textContent =
+        "$" + balance.toFixed(2);
+      document.getElementById("profit").textContent =
+        (profit >= 0 ? "$" : "-$") + Math.abs(profit).toFixed(2);
+      document.getElementById("tradeCount").textContent = tradeCount;
+      document.getElementById("tradeResult").innerHTML =
+        "<strong>الصفقة التجريبية رقم:</strong> " + tradeCount + "<br>" +
+        "<strong>السوق:</strong> " + name + "<br>" +
+        "<strong>العملية:</strong> " +
+        (direction === "buy" ? "شراء BUY" : "بيع SELL") + "<br>" +
+        "<strong>التغير العشوائي:</strong> " +
+        (change >= 0 ? "+" : "-") + "$" + Math.abs(change).toFixed(2) +
+        "<br><strong>الرصيد الحالي:</strong> $" + balance.toFixed(2) +
+        "<br>هذه نتيجة عشوائية للمحاكاة وليست نتيجة صفقة سوق حقيقية.";
+    }
+    function resetLab() {
+      balance = 10;
+      profit = 0;
+      tradeCount = 0;
+      document.getElementById("balance").textContent = "$10.00";
+      document.getElementById("profit").textContent = "$0.00";
+      document.getElementById("tradeCount").textContent = "0";
+      document.getElementById("labStatus").textContent = "جاهز";
+      document.getElementById("tradeResult").textContent =
+        "تمت إعادة ضبط المختبر. الرصيد الافتراضي $10.00.";
+    }
+  </script>
 </body>
 </html>
